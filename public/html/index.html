@@ -135,7 +135,7 @@
                     var myLocationMarker = new google.maps.Marker({position: myLocationObject, map: map});
 
                     $.get((url + "geocode?loc=" + myLocationString), {}, function (response) {
-                        let splitLocationArray = split(response.location, ',');
+                        let splitLocationArray = response.location.split(',');
                         let warehouseLocation = {
                             lat: splitLocationArray[0],
                             lng: splitLocationArray[1]
