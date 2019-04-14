@@ -115,8 +115,8 @@
     <div id="map"></div>
     <script>
         var url = "http://localhost:8080/";
-        // var url = "https://i-slept-all-day.appspot.com/";
         var map;
+
         function initMap() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
@@ -129,10 +129,33 @@
 
                     map = new google.maps.Map(document.getElementById("map"), {
                         center: myLocationObject,
-                        zoom: 8
+                        zoom: 8,
+                        // mapTypeControlOptions: {
+                        //     mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.HYBRID]
+                        // },
+                        disableDefaultUI: true,
+                        mapTypeControl: false,
+                        // scaleControl: true,
+                        zoomControl: true,
+                        // zoomControlOptions: {
+                        //     style: google.maps.ZoomControlStyle.SMALL
+                        // },
+                        // mapTypeId: google.maps.MapTypeId.ROADMAP
                     });
 
-                    var myLocationMarker = new google.maps.Marker({position: myLocationObject, map: map});
+                    let myLocationMarker = new google.maps.Marker({
+                        position: myLocationObject,
+                        map: map//,
+                        // title:
+                    });
+
+                    let myLocationInfoWindow = new google.maps.InfoWindow({
+                        content: "My Location"
+                    });
+
+                    myLocationMarker.addListener("click", function() {
+                        myLocationInfoWindow.open(map, myLocationMarker);
+                    });
 
                     $.ajax({
                         crossOrigin: true,
@@ -143,7 +166,20 @@
                                 lat: parseFloat(splitLocationArray[0]),
                                 lng: parseFloat(splitLocationArray[1])
                             };
-                            let warehouseLocationMarker = new google.maps.Marker({position: warehouseLocation, map: map});
+
+                            let warehouseLocationMarker = new google.maps.Marker({
+                                position: warehouseLocation,
+                                map: map,
+                                title: response.address
+                            });
+
+                            let warehouseLocationInfoWindow = new google.maps.InfoWindow({
+                                content: response.address
+                            });
+
+                            warehouseLocationMarker.addListener("click", function() {
+                                warehouseLocationInfoWindow.open(map, warehouseLocationMarker);
+                            });
                         }
                     });
                 }, function (error) {
