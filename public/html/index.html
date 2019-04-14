@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Android</title>
 
-    <!-- Page styles -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.min.css">
@@ -24,13 +23,6 @@
         }
     </style>
 
-    <style>
-        #map {
-            height: 100%;
-            width: 75%;
-        }
-    </style>
-
     <script
         src="https://code.jquery.com/jquery-3.4.0.js"
         integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo="
@@ -43,7 +35,6 @@
     <div class="android-header mdl-layout__header mdl-layout__header--waterfall"  style="background-color: #4ca999;">
         <div class="mdl-layout__header-row">
           <span class="android-title mdl-layout-title">
-            <!--<img class="android-logo-image" src="images/android-logo.png">-->
               lmperfect
           </span>
             <!-- Add spacer, to align navigation to the right in desktop -->
@@ -53,63 +44,24 @@
                     <i class="material-icons">search</i>
                 </label>
                 <div class="mdl-textfield__expandable-holder" >
-                    <input class="mdl-textfield__input" style="color:#fffdd0;" type="text" id="search-field">
+                    <input class="mdl-textfield__input" style="color: white;" type="text" id="search-field">
                 </div>
             </div>
-            <!-- Navigation -->
-            <!--<div class="android-navigation-container">-->
-                <!--<nav class="android-navigation mdl-navigation">-->
-                    <!--<a class="mdl-navigation__link mdl-typography&#45;&#45;text-uppercase" href="">Phones</a>-->
-                    <!--<a class="mdl-navigation__link mdl-typography&#45;&#45;text-uppercase" href="">Tablets</a>-->
-                    <!--<a class="mdl-navigation__link mdl-typography&#45;&#45;text-uppercase" href="">Wear</a>-->
-                    <!--<a class="mdl-navigation__link mdl-typography&#45;&#45;text-uppercase" href="">TV</a>-->
-                    <!--<a class="mdl-navigation__link mdl-typography&#45;&#45;text-uppercase" href="">Auto</a>-->
-                    <!--<a class="mdl-navigation__link mdl-typography&#45;&#45;text-uppercase" href="">One</a>-->
-                    <!--<a class="mdl-navigation__link mdl-typography&#45;&#45;text-uppercase" href="">Play</a>-->
-                <!--</nav>-->
-            <!--</div>-->
-            <!--<span class="android-mobile-title mdl-layout-title">-->
-            <!--<img class="android-logo-image" src="images/android-logo.png">-->
           </span>
-            <!--<button class="android-more-button mdl-button mdl-js-button mdl-button&#45;&#45;icon mdl-js-ripple-effect" id="more-button">-->
-                <!--<i class="material-icons">more_vert</i>-->
-            <!--</button>-->
         </div>
     </div>
 
-    <!--<div class="android-drawer mdl-layout__drawer">-->
-        <!--<span class="mdl-layout-title">-->
-            <!--lmperfect-->
-          <!--&lt;!&ndash;<img class="android-logo-image" src="images/android-logo-white.png">&ndash;&gt;-->
-        <!--</span>-->
-        <!--<nav class="mdl-navigation">-->
-            <!--&lt;!&ndash;<a class="mdl-navigation__link" href="">Phones</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a class="mdl-navigation__link" href="">Tablets</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a class="mdl-navigation__link" href="">Wear</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a class="mdl-navigation__link" href="">TV</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a class="mdl-navigation__link" href="">Auto</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a class="mdl-navigation__link" href="">One</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a class="mdl-navigation__link" href="">Play</a>&ndash;&gt;-->
-            <!--<div class="android-drawer-separator"></div>-->
-            <!--<span class="mdl-navigation__link" href="">Versions</span>-->
-            <!--<a class="mdl-navigation__link" href="">Lollipop 5.0</a>-->
-            <!--<a class="mdl-navigation__link" href="">KitKat 4.4</a>-->
-            <!--<a class="mdl-navigation__link" href="">Jelly Bean 4.3</a>-->
-            <!--<a class="mdl-navigation__link" href="">Android history</a>-->
-            <!--<div class="android-drawer-separator"></div>-->
-            <!--<span class="mdl-navigation__link" href="">Resources</span>-->
-            <!--<a class="mdl-navigation__link" href="">Official blog</a>-->
-            <!--<a class="mdl-navigation__link" href="">Android on Google+</a>-->
-            <!--<a class="mdl-navigation__link" href="">Android on Twitter</a>-->
-            <!--<div class="android-drawer-separator"></div>-->
-            <!--<span class="mdl-navigation__link" href="">For developers</span>-->
-            <!--<a class="mdl-navigation__link" href="">App developer resources</a>-->
-            <!--<a class="mdl-navigation__link" href="">Android Open Source Project</a>-->
-            <!--<a class="mdl-navigation__link" href="">Android SDK</a>-->
-        <!--</nav>-->
-    <!--</div>-->
+    <div style="height: 100%; width: 100%;">
+        <div id="map" style="height: 100%; width: 70%; float: right;"></div>
+        <div id="cardsContainer" style="height: 100%; width: 30%; background-color: white;">
 
-    <div id="map"></div>
+
+        </div>
+    </div>
+
+
+
+
     <script>
         var url = "http://localhost:8080/";
         var map;
@@ -127,23 +79,14 @@
                     map = new google.maps.Map(document.getElementById("map"), {
                         center: myLocationObject,
                         zoom: 8,
-                        // mapTypeControlOptions: {
-                        //     mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.HYBRID]
-                        // },
                         disableDefaultUI: true,
                         mapTypeControl: false,
-                        // scaleControl: true,
                         zoomControl: true,
-                        // zoomControlOptions: {
-                        //     style: google.maps.ZoomControlStyle.SMALL
-                        // },
-                        // mapTypeId: google.maps.MapTypeId.ROADMAP
                     });
 
                     let myLocationMarker = new google.maps.Marker({
                         position: myLocationObject,
-                        map: map//,
-                        // title:
+                        map: map
                     });
 
                     let myLocationInfoWindow = new google.maps.InfoWindow({
@@ -187,10 +130,7 @@
             }
         }
     </script>
-
-
 </div>
-<!--<a href="https://github.com/google/material-design-lite/blob/mdl-1.x/templates/android-dot-com/" target="_blank" id="view-source" class="mdl-button mdl-js-button mdl-button&#45;&#45;raised mdl-js-ripple-effect mdl-color&#45;&#45;accent mdl-color-text&#45;&#45;accent-contrast">View Source</a>-->
 <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFYoMiJxqITP-Dppxtdu8o7NpSN9d5myc&callback=initMap"></script>
 </body>
