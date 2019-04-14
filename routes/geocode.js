@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+const mysql = require("mysql");
 
 const key = "AIzaSyBFYoMiJxqITP-Dppxtdu8o7NpSN9d5myc";
 
@@ -10,57 +11,103 @@ const key = "AIzaSyBFYoMiJxqITP-Dppxtdu8o7NpSN9d5myc";
 router.get("/", function(req, res, next) {
     let clientLatLong = req.query.loc;
 
-    //retrieve all warehouse locations in latlng format
-    let warehouseLocations = [
-        "34.505223,-118.243683",
-        "44.068203,-114.742043",
-        "43.190295,-115.686733",
-        "47.549657,-120.213688",
-        "42.308688,-76.298719",
-        "37.421315,-83.725476",
-        "33.725476,-90.141492",
-        "30.994832,-95.636117",
-        "36.883643,-91.298093",
-        "34.093226,-100.658445",
-        "42.320232,-112.88215"
-    ];
-
-    const googleMapsClient = require("@google/maps").createClient({
-        key: key
+    let connection = mysql.createConnection({
+        host: "35.247.32.84",
+        user: "root",
+        database: "hackSC19",
+        password: "root"
     });
 
-    googleMapsClient.distanceMatrix({
-        origins: clientLatLong,
-        destinations: warehouseLocations
-    }, function(err, response) {
-        let data = response.json;
+    connection.connect(function(err) {
+        if (err) {
+            console.log(err.stack);
+            return;
+        } else {
+            console.log("Connected.");
+            connection.query("SELECT Latitude, Longitude FROM warehouseLocations;",
+                function (error, results, fields) {
+                    if (error) {
+                        console.log("error");
+                        return;
+                    }
 
-        //find the index of the closest warehouse
-        let indexOfClosestWarehouse = 0;
-        for (let i = 0; i < data.rows[0].elements.length; ++i) {
-            if (data.rows[0].elements[i].duration.value < data.rows[0].elements[indexOfClosestWarehouse].duration.value) {
-                indexOfClosestWarehouse = i;
-            }
+                    //retrieve all warehouse locations
+                    let warehouseLocations = [];
+
+                    for (var i = 0; i < results.length; ++i) {
+                        let coordinate = results[i].Latitude + ',' + results[i].Longitude;
+                        warehouseLocations.push(coordinate);
+                    }
+
+                    //find the closest warehouse
+                    const googleMapsClient = require("@google/maps").createClient({
+                        key: key
+                    });
+
+                    googleMapsClient.distanceMatrix({
+                        origins: clientLatLong,
+                        destinations: warehouseLocations
+                    }, function(err, response) {
+                        let data = response.json;
+
+                        //find the index of the closest warehouse
+                        let indexOfClosestWarehouse = 0;
+                        for (let i = 0; i < data.rows[0].elements.length; ++i) {
+                            if (data.rows[0].elements[i].duration.value < data.rows[0].elements[indexOfClosestWarehouse].duration.value) {
+                                indexOfClosestWarehouse = i;
+                            }
+                        }
+
+                        let distanceObject = data.rows[0].elements[indexOfClosestWarehouse];
+
+                        let closestWarehouse = {
+                            address: data.destination_addresses[indexOfClosestWarehouse],
+                            location: warehouseLocations[indexOfClosestWarehouse],
+                            distance: {
+                                text: distanceObject.distance.text,
+                                value: distanceObject.distance.value
+                            },
+                            duration: {
+                                text: distanceObject.duration.text,
+                                value: distanceObject.duration.value
+                            },
+                            items: []
+                        };
+
+                        //now take the latitude and longitude of the closest warehouse and get the stuff located at the closest warehouse
+                        connection.query("select CategoryName, sum(h.FailedCases) AS FailedCases, Latitude, Longitude " +
+                            "from hackscdeidentified h, warehouseLocations w " +
+                            "where h.ReceivingWarehouse=w.ReceivingWareHouse " +
+                            "AND Latitude=? AND Longitude=? " +
+                            "AND h.FailedCases>0 " +
+                            "GROUP BY CategoryName, h.ReceivingWarehouse, Latitude, Longitude;",
+                            [closestWarehouse.location.split(',')[0],
+                                closestWarehouse.location.split(',')[1]],
+                            function (error, results, fields) {
+                            for (var i = 0; i < results.length; ++i) {
+                                let item = {
+                                    name: results[i].CategoryName,
+                                    cases: results[i].FailedCases
+                                };
+
+                                closestWarehouse.items.push(item);
+                            }
+
+                            res.send(closestWarehouse);
+                        });
+
+                    });
+                });
         }
-
-        let distanceObject = data.rows[0].elements[indexOfClosestWarehouse];
-
-        let closestWarehouse = {
-            address: data.destination_addresses[indexOfClosestWarehouse],
-            location: warehouseLocations[indexOfClosestWarehouse],
-            distance: {
-                text: distanceObject.distance.text,
-                value: distanceObject.distance.value
-            },
-            duration: {
-                text: distanceObject.duration.text,
-                value: distanceObject.duration.value
-            },
-        };
-
-        res.send(closestWarehouse);
     });
+
 });
 
 module.exports = router;
 
+
+
+
+
+
+module.exports = router;
