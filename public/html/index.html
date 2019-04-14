@@ -114,8 +114,8 @@
 
     <div id="map"></div>
     <script>
-        // var url = "http://i-slept-all-day.appspot.com/";
-        var url = "https://i-slept-all-day.appspot.com/";
+        var url = "http://localhost:8080/";
+        // var url = "https://i-slept-all-day.appspot.com/";
         var map;
         function initMap() {
             if (navigator.geolocation) {
@@ -134,14 +134,17 @@
 
                     var myLocationMarker = new google.maps.Marker({position: myLocationObject, map: map});
 
-                    $.get((url + "geocode?loc=" + myLocationString), {}, function (response) {
-                        let splitLocationArray = response.location.split(',');
-                        let warehouseLocation = {
-                            lat: parseFloat(splitLocationArray[0]),
-                            lng: parseFloat(splitLocationArray[1])
-                        };
-
-                        let warehouseLocationMarker = new google.maps.Marker({position: warehouseLocation, map: map});
+                    $.ajax({
+                        crossOrigin: true,
+                        url: (url + "geocode?loc=" + myLocationString),
+                        success: function (response) {
+                            let splitLocationArray = response.location.split(',');
+                            let warehouseLocation = {
+                                lat: parseFloat(splitLocationArray[0]),
+                                lng: parseFloat(splitLocationArray[1])
+                            };
+                            let warehouseLocationMarker = new google.maps.Marker({position: warehouseLocation, map: map});
+                        }
                     });
                 }, function (error) {
                     console.log(error);
